@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <template id="custom_invoice_report_main">
+        <t t-call="web.external_layout_boxed">
+            <div class="page">
+                <div class="row">
+                    <div class="col-6" style="text-align:left; margin-left:60px; padding-top:22px;">
+                        <h2>Invoice to:</h2>
+                        <h4>
+                            <span t-field="o.partner_id"/>
+                        </h4>
+                        <div style="color:#36454F; margin-top:-10px;">
+                            <span t-field="o.partner_id.street"/>
+                            <br/>
+                            <span t-field="o.partner_id.street2"/>
+                            <span t-field="o.partner_id.city"/>
+                            <br/>
+                            <span t-field="o.partner_id.state_id"/>
+                            <br/>
+                            <span t-field="o.partner_id.zip"/>
+                        </div>
+
+                    </div>
+
+                    <div class="col-2">
+                        <div style="text-align:left; margin-left:30px; padding-top:100px;">
+                            <h5>Invoice #</h5>
+                        </div>
+                        <div style="text-align:left; margin-left:30px;">
+                            <h5>Date</h5>
+                        </div>
+                    </div>
+                    <div class="col-3" style="text-align:right; padding-top:102px; padding-right:60px; color:#36454F;">
+                        <div>
+                            <span t-field="o.name"/>
+                        </div>
+                        <div style="margin-top:6px;">
+                            <span t-field="o.invoice_date"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <style>
+                        table {
+                        border:2px solid #36454F;
+                        width: 87%;
+                        }
+
+                        th, td {
+                        text-align:left;
+                        padding: 26px;
+                        border:1px solid transparent;
+
+                        }
+
+                        tr:nth-child(even){background-color: #f2f2f2}
+
+                        th {
+                        background-color: #36454F;
+                        color: white;
+                        padding:14px;
+                        }
+                    </style>
+                    <table style="margin-top:50px; margin-left:60px;">
+                        <thead>
+                            <tr>
+                                <th style="width:4%; padding-left:22px;">SL.</th>
+                                <th style="width:48%; padding-left:22px;">Item Description</th>
+                                <th style="width:18%; padding-left:23px;">Price</th>
+                                <th style="width:12%; padding-left:21px;">Qty.</th>
+                                <th style="padding-left:21px">Total</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <td style="padding:0px;"> </td>
+                                <td style="padding:0px;"> </td>
+                                <td style="padding:0px;"> </td>
+                                <td style="padding:0px;"> </td>
+                                <td style="padding:0px;"> </td>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            <t t-foreach="o.invoice_line_ids" t-as="line">
+                                <tr>
+                                    <td>
+                                        <t t-esc="line_index + 1"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="line.product_id.display_name"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="line.price_unit"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="line.quantity"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="line.price_subtotal"/>
+                                    </td>
+                                </tr>
+                            </t>
+                            <t t-set="length" t-value="6-len(o.invoice_line_ids)"/>
+                            <t t-foreach="range(length)" t-as="item">
+                                <tr>
+                                    <td style="height:16px;"> </td>
+                                    <td> </td>
+                                    <td> </td>
+                                    <td> </td>
+                                    <td> </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-7" style="padding-top:25px; margin-left:63px;">
+                        <h6>Thank you for your business</h6>
+                    </div>
+                    <div class="col-2" style="padding-top:16px; text-align:left;">
+                        <div>
+                            <h5>Sub total:</h5>
+                            <h5>Tax:</h5>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div style="text-align:left; padding-top:20px;">
+                            <t t-esc="o.amount_untaxed"/>
+                        </div>
+                        <div style="margin-top:15px; text-align:left;">
+                            <t t-esc="line.tax_ids.display_name"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6" style="text-align:left; margin-left:63px;">
+                        <h5>Terms &amp; Conditions</h5>
+                        <t t-esc="o.narration"/>
+                    </div>
+                    <div class="col-5" style="margin-top:40px; margin-left:40px; text-align:left;">
+                        <h5 style="background-color:#FFC300; padding-top:15px; padding-bottom:14px; padding-left:34px;">
+                            Total:&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+                            <t t-esc="o.amount_total"/>
+                        </h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-5" style="margin-top:10px;">
+                        <div style="text-align:left; margin-left:63px;">
+                            <h5>Payment Info:</h5>
+                        </div>
+                        <div style="text-align:left; margin-left:63px; margin-top:1px;">
+                            <h6>Account#:<span style="padding-left:40px;" t-field="o.company_id.partner_id.bank_ids.acc_number"/></h6>
+                            <h6>A/C Name:</h6>
+                            <h6>Bank Details:<span style="padding-left:20px;" t-field="o.company_id.partner_id.bank_ids.bank_id.name"/></h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+
+    <template id="custom_report.report_invoice_with_payments">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="custom_report.custom_invoice_report_main"/>
+            </t>
+        </t>
+    </template>
+</odoo>
